@@ -58,7 +58,7 @@ jobs:
           '{StackFileContent: $composeFile, Env: [$env], Prune: true}')
 
         PORTAINER_API_KEY=$(curl -s -X POST "$PORTAINER_URL/api/auth" -H "Content-Type: application/json" -d '{"username": "$PORTAINER_USERNAME", "password": "$PORTAINER_PASSWORD"}' | jq -r .jwt)
-
+        echo $PORTAINER_API_KEY
         # If stack exists, update it, otherwise create a new stack
         if [ -n "$STACK_ID" ]; then
           curl -X PUT "$PORTAINER_URL/api/stacks/$STACK_ID?endpointId=$ENDPOINT_ID" \
