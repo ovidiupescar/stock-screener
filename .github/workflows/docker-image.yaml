@@ -42,5 +42,5 @@ jobs:
       run: |
         PORTAINER_API_KEY=$(curl -s -X POST "${{ secrets.PORTAINER_URL }}/api/auth" -H "Content-Type: application/json" -d '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
 
-        curl -X POST "${{ secrets.PORTAINER_URL }}/api/stacks/webhooks/10b5cd4c-a961-4742-8ee1-277ab3b66d4c" \
+        curl -X POST "${{ secrets.PORTAINER_URL }}/api/stacks/webhooks/901029b9-838f-4267-a5fa-6e801ab3c520" \
         -H "Authorization: Bearer $PORTAINER_API_KEY"
