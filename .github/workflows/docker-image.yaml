@@ -44,15 +44,16 @@ jobs:
 
     - name: Deploy stack to Portainer
       run: |
+        TOKEN=$(curl -s -X POST "http://portainer.artorius.uk/api/auth" -H "Content-Type: application/json" -d '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
         curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks" \
         -H "Content-Type: application/json" \
-        -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
+        -H "Authorization: Bearer $TOKEN" \
         --data-binary @docker-compose.yml  # Update with your path
 
     - name: Update stack in Portainer
       run: |
         curl -X PUT "http://${{ secrets.PORTAINER_URL }}/api/stacks/1" \
-        -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
+        -H "Authorization: Bearer $TOKEN" \
         -H "Content-Type: application/json" \
         --data-binary @docker-compose.yml  # Update with your path
   
