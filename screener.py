@@ -113,7 +113,7 @@ def parse_tickers():
         print("====================")
         print(f"{ticker} --> {i+1} / {len(tickers)}")
         print("====================")
-        df = get_csv_prices(ticker)
+        df = get_y_prices(ticker)
 
         if df.empty:
             continue
