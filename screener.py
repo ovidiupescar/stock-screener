@@ -103,6 +103,7 @@ def apply_total_signal(df, rsi_threshold_low=30, rsi_threshold_high=70, bb_width
     return df
 
 def parse_tickers():
+    print("start parse_tickers")
     tickers = get_all_tickers()
 
     results = []
@@ -147,6 +148,6 @@ def parse_tickers():
     df_r = pd.DataFrame(results)
     df_r.to_csv("results.csv")
 
-parse_tickers()
+    print("Results finished")
 
         
