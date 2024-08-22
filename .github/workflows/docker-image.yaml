@@ -47,11 +47,10 @@ jobs:
         echo $PORTAINER_PASSWORD
         # Prepare payload
         PAYLOAD=$(jq -n \
-          --argjson env "{\"username\":\"${{ secrets.DOCKER_USERNAME }}\"}" \
           --arg composeFile "$(cat ${{ secrets.COMPOSE_FILE_PATH }})" \
           --arg endpointId "$ENDPOINT_ID" \
           --arg image "${{ secrets.DOCKER_USERNAME }}/telegram-bot:latest" \
-          '{StackFileContent: $composeFile, Env: [$env], Prune: true}')
+          '{StackFileContent: $composeFile, Prune: true}')
 
         PORTAINER_API_KEY=$(curl -s -X POST "${{ secrets.PORTAINER_URL }}/api/auth" -H "Content-Type: application/json" -d '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
         echo $PORTAINER_API_KEY
