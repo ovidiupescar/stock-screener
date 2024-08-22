@@ -31,9 +31,10 @@ jobs:
     
   deploy:
     runs-on: ubuntu-latest
-    needs: build
 
     steps:
+    - name: Check working dir
+      run: pwd
     - name: Check file structure
       run: ls -R
     - name: Deploy stack to Portainer
