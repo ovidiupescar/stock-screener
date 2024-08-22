@@ -13,7 +13,9 @@ from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, Updater
 from screener import parse_tickers
 import asyncio
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 
 TOKEN: Final = '7374679860:AAGNP5_IhbEczmQmhqqaxHFoFVeaS-kmNts'
 BOT_USER = 'flovitrade_bot'
@@ -92,4 +94,11 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        loop = asyncio.get_running_loop()
+        if loop.is_running():
+            print("Event loop already running. Exiting.")
+        else:
+            main()
+    except RuntimeError:
+        main()
