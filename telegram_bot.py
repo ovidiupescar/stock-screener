@@ -69,7 +69,7 @@ async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def send_message(bot: Bot, message):
     await bot.send_message(chat_id=CHAT_ID, text=message)
 
-async def main() -> None:
+def main() -> None:
     print('Starting bot...')
     app = Application.builder().token(TOKEN).build()
 
@@ -92,5 +92,4 @@ async def main() -> None:
 
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    main()
