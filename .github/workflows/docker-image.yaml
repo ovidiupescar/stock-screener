@@ -39,27 +39,8 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Deploy Stack to Portainer
-      env:
-        IMAGE_TAG: latest
       run: |
-        # Prepare payload
-        PAYLOAD=$(jq -n \
-          --arg composeFile "$(cat ${{ secrets.COMPOSE_FILE_PATH }})" \
-          --arg endpointId "$ENDPOINT_ID" \
-          --arg image "${{ secrets.DOCKER_USERNAME }}/telegram-bot:latest" \
-          '{StackFileContent: $composeFile, Prune: true, IsComposeFormat: true}')
-
         PORTAINER_API_KEY=$(curl -s -X POST "${{ secrets.PORTAINER_URL }}/api/auth" -H "Content-Type: application/json" -d '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
-        echo $PORTAINER_API_KEY
-        # If stack exists, update it, otherwise create a new stack
-        if [ -n "${{ secrets.STACK_ID }}" ]; then
-          curl -X PUT "${{ secrets.PORTAINER_URL }}/api/stacks/${{ secrets.STACK_ID }}?endpointId=${{ secrets.ENDPOINT_ID }}" \
-            -H "Authorization: Bearer $PORTAINER_API_KEY" \
-            -H "Content-Type: application/json" \
-            --data "$PAYLOAD"
-        else
-          curl -X POST "${{ secrets.PORTAINER_URL }}/api/stacks?type=2&method=string&endpointId=${{ secrets.ENDPOINT_ID }}" \
-            -H "Authorization: Bearer $PORTAINER_API_KEY" \
-            -H "Content-Type: application/json" \
-            --data "$PAYLOAD"
-        fi
+
+        curl -X POST "${{ secrets.PORTAINER_URL }}/api/stacks/${{ secrets.STACK_ID }}/redeploy" \
+        -H "Authorization: Bearer $PORTAINER_API_KEY"
