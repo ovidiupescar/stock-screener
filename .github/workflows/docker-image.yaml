@@ -34,6 +34,8 @@ jobs:
     needs: build
 
     steps:
+    - name: Check file structure
+      run: ls -R
     - name: Deploy stack to Portainer
       run: |
         curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks" \
