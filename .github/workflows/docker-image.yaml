@@ -28,4 +28,23 @@ jobs:
         context: .
         push: true
         tags: fenadmin/telegram_bot:latest
+    
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Deploy stack to Portainer
+      run: |
+        curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
+        --data-binary @deploy/docker-compose.yml  # Update with your path
+
+    - name: Update stack in Portainer
+      run: |
+        curl -X PUT "http://${{ secrets.PORTAINER_URL }}/api/stacks/1" \
+        -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
+        -H "Content-Type: application/json" \
+        --data-binary @deploy/docker-compose.yml  # Update with your path
   

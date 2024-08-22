@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  web:
+    image: fenadmin/telegram_bot:latest
+    ports:
+      -1180:80
+      -1122:22
+    networks:
+      - fennet
+    volumes:
+      - /mnt/user/appdata/python-scripts:/scripts
+  
+networks:
+  fennet:
+    driver: bridge
