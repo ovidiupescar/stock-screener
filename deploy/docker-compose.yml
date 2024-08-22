@@ -8,3 +8,6 @@ services:
       - "1122:22"
     networks:
       - fennet
+networks:
+  fennet:
+    external: true

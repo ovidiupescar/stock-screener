@@ -28,35 +28,43 @@ jobs:
         context: .
         push: true
         tags: fenadmin/telegram_bot:latest
-    
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Check working dir
-      run: pwd
-    - name: Check file structure
-      run: ls -R
-    - name: Check file structure stock-screener
-      run: ls .. -R
+    deploy:
+      name: Deploy to Portainer
+      runs-on: ubuntu-latest
+      needs: build
 
-    - name: Deploy stack to Portainer
-      run: |
-        curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks?type=1&method=file&endpointId=2" \
-        -H "Content-Type: application/json" \
-        -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
-        -H "Content-Type: multipart/form-data" \
-        -F "file=@deploy/docker-compose.yml" \
-        -F "Name=telegram-bot"
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Update stack in Portainer
-      run: |
-        curl -X PUT "http://${{ secrets.PORTAINER_URL }}/api/stacks?type=1&method=file&endpointId=2" \
-        -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
-        -H "Content-Type: multipart/form-data" \
-        -F "file=@deploy/docker-compose.yml" \
-        -F "Name=telegram-bot"
-  
+      - name: Deploy Stack to Portainer
+        env:
+          PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
+          PORTAINER_API_KEY: ${{ secrets.PORTAINER_API_KEY }}
+          ENDPOINT_ID: ${{ secrets.ENDPOINT_ID }}
+          STACK_ID: ${{ secrets.STACK_ID }}
+          COMPOSE_FILE_PATH: ${{ secrets.COMPOSE_FILE_PATH }}
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          IMAGE_TAG: latest
+        run: |
+          # Prepare payload
+          PAYLOAD=$(jq -n \
+            --argjson env "{\"username\":\"$DOCKER_HUB_USERNAME\"}" \
+            --arg composeFile "$(cat $COMPOSE_FILE_PATH)" \
+            --arg endpointId "$ENDPOINT_ID" \
+            --arg image "$DOCKER_HUB_USERNAME/telegram-bot:$IMAGE_TAG" \
+            '{StackFileContent: $composeFile, Env: [$env], Prune: true}')
+
+          # If stack exists, update it, otherwise create a new stack
+          if [ -n "$STACK_ID" ]; then
+            curl -X PUT "$PORTAINER_URL/api/stacks/$STACK_ID?endpointId=$ENDPOINT_ID" \
+              -H "Authorization: Bearer $PORTAINER_API_KEY" \
+              -H "Content-Type: application/json" \
+              --data "$PAYLOAD"
+          else
+            curl -X POST "$PORTAINER_URL/api/stacks?type=2&method=string&endpointId=$ENDPOINT_ID" \
+              -H "Authorization: Bearer $PORTAINER_API_KEY" \
+              -H "Content-Type: application/json" \
+              --data "$PAYLOAD"
+          fi
