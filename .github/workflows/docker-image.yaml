@@ -41,7 +41,8 @@ jobs:
     - name: Deploy Stack to Portainer
       env:
         PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
-        PORTAINER_API_KEY: ${{ secrets.PORTAINER_API_KEY }}
+        PORTAINER_USERNAME: ${{ secrets.PORTAINER_USERNAME }}
+        PORTAINER_PASSWORD: ${{ secrets.PORTAINER_PASSWORD }}
         ENDPOINT_ID: ${{ secrets.ENDPOINT_ID }}
         STACK_ID: ${{ secrets.STACK_ID }}
         COMPOSE_FILE_PATH: ${{ secrets.COMPOSE_FILE_PATH }}
@@ -55,6 +56,8 @@ jobs:
           --arg endpointId "$ENDPOINT_ID" \
           --arg image "$DOCKER_HUB_USERNAME/telegram-bot:$IMAGE_TAG" \
           '{StackFileContent: $composeFile, Env: [$env], Prune: true}')
+
+        PORTAINER_API_KEY=$(curl -s -X POST "$PORTAINER_URL/api/auth" -H "Content-Type: application/json" -d '{"username": "$PORTAINER_USERNAME", "password": "$PORTAINER_PASSWORD"}' | jq -r .jwt)
 
         # If stack exists, update it, otherwise create a new stack
         if [ -n "$STACK_ID" ]; then
