@@ -44,7 +44,8 @@ jobs:
 
     - name: Deploy stack to Portainer
       run: |
-        TOKEN=$(curl -s -X POST "http://portainer.artorius.uk/api/auth" -H "Content-Type: application/json" -d '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
+        echo "Starting deployment process..."
+        TOKEN=$(curl -s -X POST "http://${{ secrets.PORTAINER_URL }}/api/auth" -H "Content-Type: application/json" -d '{"username": "${{ secrets.PORTAINER_USERNAME }}", "password": "${{ secrets.PORTAINER_PASSWORD }}"}' | jq -r .jwt)
         curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $TOKEN" \
