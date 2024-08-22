@@ -39,12 +39,12 @@ jobs:
         curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
-        --data-binary @deploy/docker-compose.yml  # Update with your path
+        --data-binary @docker-compose.yml  # Update with your path
 
     - name: Update stack in Portainer
       run: |
         curl -X PUT "http://${{ secrets.PORTAINER_URL }}/api/stacks/1" \
         -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
         -H "Content-Type: application/json" \
-        --data-binary @deploy/docker-compose.yml  # Update with your path
+        --data-binary @docker-compose.yml  # Update with your path
   
