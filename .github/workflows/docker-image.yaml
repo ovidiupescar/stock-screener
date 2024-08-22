@@ -44,15 +44,18 @@ jobs:
 
     - name: Deploy stack to Portainer
       run: |
-        curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks" \
+        curl -X POST "http://${{ secrets.PORTAINER_URL }}/api/stacks?type=1&method=file&endpointId=2" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
-        --data-binary @deploy/docker-compose.yml  # Update with your path
+        -H "Content-Type: multipart/form-data" \
+        -F "file=@deploy/docker-compose.yml" \
+        -F "Name=telegram-bot"
 
     - name: Update stack in Portainer
       run: |
-        curl -X PUT "http://${{ secrets.PORTAINER_URL }}/api/stacks/1" \
+        curl -X PUT "http://${{ secrets.PORTAINER_URL }}/api/stacks?type=1&method=file&endpointId=2" \
         -H "Authorization: Bearer ${{ secrets.PORTAINER_API_TOKEN }}" \
-        -H "Content-Type: application/json" \
-        --data-binary @deploy/docker-compose.yml  # Update with your path
+        -H "Content-Type: multipart/form-data" \
+        -F "file=@deploy/docker-compose.yml" \
+        -F "Name=telegram-bot"
   
